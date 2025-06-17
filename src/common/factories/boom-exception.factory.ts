@@ -15,10 +15,10 @@ export enum BoomErrorType {
 
 export interface BoomExceptionOptions {
   message: string;
-  context?: string;
-  error?: any;
-  data?: any;
-  headers?: Record<string, string>;
+  context?: string | undefined;
+  error?: any | undefined;
+  data?: any | undefined;
+  headers?: Record<string, string> | undefined;
 }
 
 export class BoomExceptionFactory {

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ProductsModule } from './modules/products/products.module';
+import { OrdersModule } from './modules/orders/orders.module';
 import { CommonModule } from './common/common.module';
 import { databaseConfig } from './config/database.config';
 import { Product } from './modules/products/entities/product.entity';
@@ -15,6 +16,7 @@ import { OrderItem } from './modules/orders/entities/order-item.entity';
     }),
     CommonModule,
     ProductsModule,
+    OrdersModule,
   ],
 })
 export class AppModule {}

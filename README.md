@@ -392,3 +392,66 @@ npm run test:cov
 ## 📄 License
 
 This project is licensed under the MIT License.
+
+## Database Migrations
+
+This project uses Sequelize migrations for database schema management. All database changes are version-controlled and can be applied systematically.
+
+### Migration Commands
+
+```bash
+# Create database
+npm run db:create
+
+# Run all pending migrations
+npm run db:migrate
+
+# Undo the last migration
+npm run db:migrate:undo
+
+# Undo all migrations
+npm run db:migrate:undo:all
+
+# Run all seeders
+npm run db:seed
+
+# Undo all seeders
+npm run db:seed:undo
+
+# Reset database (undo all, migrate, seed)
+npm run db:reset
+
+# Drop database
+npm run db:drop
+```
+
+### Creating New Migrations
+
+```bash
+# Generate a new migration
+npx sequelize-cli migration:generate --name migration-name
+
+# Example: Add a new column to products table
+npx sequelize-cli migration:generate --name add-category-to-products
+```
+
+### Migration File Structure
+
+Migrations are stored in `src/database/migrations/` and follow the naming convention:
+- `001-create-products.js`
+- `002-create-orders.js`
+- `003-create-order-items.js`
+
+Each migration file exports `up()` and `down()` functions for applying and reverting changes.
+
+### Seeding Data
+
+Seeders are stored in `src/database/seeders/` and can be used to populate the database with initial data:
+
+```bash
+# Run all seeders
+npm run db:seed
+
+# Run specific seeder
+npx sequelize-cli db:seed --seed 001-demo-products.js
+```

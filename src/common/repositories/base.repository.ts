@@ -139,4 +139,18 @@ export abstract class BaseRepository<T extends Model> implements IRepository<T> 
       );
     }
   }
+
+  async deleteByCondition(condition: any): Promise<void> {
+    try {
+      const deletedCount = await this.model.destroy({ where: condition });
+      this.logger.log(`Deleted ${deletedCount} ${this.model.name} records by condition`, this.constructor.name);
+    } catch (error) {
+      this.logger.error(`Failed to delete ${this.model.name} by condition`, error, this.constructor.name);
+      throw BoomExceptionFactory.databaseError(
+        `Failed to delete ${this.model.name} by condition`,
+        this.constructor.name,
+        error
+      );
+    }
+  }
 } 
