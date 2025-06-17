@@ -4,7 +4,7 @@ A scalable NestJS-based e-commerce backend with a clean, modular architecture de
 
 ## 🏗️ Architecture Overview
 
-This project follows a **feature-based modular architecture** with clear separation of concerns:
+This project follows a **feature-based modular architecture** with clear separation of concerns and implements **SOLID principles** and **design patterns**:
 
 ```
 src/
@@ -12,14 +12,20 @@ src/
 │   ├── products/           # Product management
 │   │   ├── controllers/    # HTTP controllers
 │   │   ├── services/       # Business logic
+│   │   ├── repositories/   # Data access layer
 │   │   ├── dto/           # Data transfer objects
 │   │   └── entities/      # Database models
 │   └── orders/            # Order management (future)
 │       ├── controllers/
 │       ├── services/
+│       ├── repositories/
 │       ├── dto/
 │       └── entities/
 ├── common/                 # Shared utilities
+│   ├── interfaces/         # Service & Repository interfaces
+│   ├── services/          # Shared services (Logger, Validation)
+│   ├── repositories/      # Base repository implementation
+│   ├── factories/         # Exception factory
 │   ├── dto/               # Common DTOs
 │   ├── decorators/        # Custom decorators
 │   ├── guards/            # Authentication guards
@@ -32,16 +38,74 @@ src/
 └── app.module.ts          # Root module
 ```
 
+## 🎯 SOLID Principles Implementation
+
+### **1. Single Responsibility Principle (SRP)**
+- **ProductsService**: Handles only product business logic
+- **ProductRepository**: Manages only data access for products
+- **ValidationService**: Handles only validation logic
+- **LoggerService**: Manages only logging functionality
+
+### **2. Open/Closed Principle (OCP)**
+- **BaseRepository**: Open for extension, closed for modification
+- **ValidationService**: New validation strategies can be added without modifying existing code
+- **ExceptionFactory**: New exception types can be added easily
+
+### **3. Liskov Substitution Principle (LSP)**
+- **ProductRepository** extends **BaseRepository** and can be substituted
+- **ProductsService** implements **IProductService** interface
+
+### **4. Interface Segregation Principle (ISP)**
+- **IReadRepository** and **IWriteRepository**: Separate interfaces for read/write operations
+- **IProductService**: Specific interface for product operations
+- **ILoggerService**: Dedicated logging interface
+
+### **5. Dependency Inversion Principle (DIP)**
+- **ProductsController** depends on **IProductService** interface, not concrete implementation
+- **ProductsService** depends on **ProductRepository** interface
+- Dependency injection configured in modules
+
+## 🏭 Design Patterns Implemented
+
+### **1. Repository Pattern**
+- **BaseRepository**: Abstract base class with common CRUD operations
+- **ProductRepository**: Concrete implementation with product-specific queries
+- **IRepository**: Interface defining repository contract
+
+### **2. Factory Pattern**
+- **ExceptionFactory**: Centralized exception creation with different types
+- **ValidationService**: Factory for different validation strategies
+
+### **3. Strategy Pattern**
+- **ValidationService**: Different validation strategies (UUID, Price, Stock)
+- **ValidationStrategy**: Interface for validation algorithms
+
+### **4. Template Method Pattern**
+- **BaseRepository**: Template methods for common database operations
+- **executeQuery**: Protected method for custom queries
+
+### **5. Singleton Pattern**
+- **LoggerService**: Single instance throughout the application
+- **ExceptionFactory**: Static factory methods
+
+### **6. Dependency Injection Pattern**
+- **NestJS DI Container**: Automatic dependency resolution
+- **Provider Tokens**: Interface-based injection with tokens
+- **Global Services**: Shared services across modules
+
 ## 🚀 Features
 
 ### ✅ Implemented
 - **Product Management**: Full CRUD operations with UUID primary keys
 - **Database Integration**: PostgreSQL with Sequelize ORM
 - **API Documentation**: Swagger/OpenAPI integration
-- **Validation**: Class-validator integration with UUID validation
-- **Error Handling**: Comprehensive error management
-- **TypeScript**: Full type safety
+- **Validation**: Class-validator integration with custom validation strategies
+- **Error Handling**: Centralized exception handling with factory pattern
+- **TypeScript**: Full type safety with interfaces and generics
 - **Security**: UUID-based IDs for better security and distributed systems support
+- **Logging**: Structured logging with context and timestamps
+- **SOLID Principles**: Clean architecture following all SOLID principles
+- **Design Patterns**: Repository, Factory, Strategy, Template Method, Singleton, DI
 
 ### 🔄 Planned Features
 - **Order Management**: Complete order lifecycle
@@ -61,6 +125,8 @@ src/
 - `GET /products/:id` - Get product by ID (UUID)
 - `PATCH /products/:id` - Update a product (UUID)
 - `DELETE /products/:id` - Delete a product (UUID)
+- `GET /products/search?minPrice=X&maxPrice=Y` - Search products by price range
+- `GET /products/low-stock?threshold=X` - Get products with low stock (default threshold: 10)
 
 ## 🛠️ Technology Stack
 
