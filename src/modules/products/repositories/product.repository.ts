@@ -20,7 +20,10 @@ export class ProductRepository extends BaseRepository<Product> {
     });
   }
 
-  async findProductsByPriceRange(minPrice: number, maxPrice: number): Promise<Product[]> {
+  async findProductsByPriceRange(
+    minPrice: number,
+    maxPrice: number,
+  ): Promise<Product[]> {
     return this.executeQuery({
       where: {
         price: {
@@ -52,4 +55,4 @@ export class ProductRepository extends BaseRepository<Product> {
       },
     });
   }
-} 
+}

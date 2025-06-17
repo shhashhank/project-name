@@ -5,11 +5,7 @@ import { BoomExceptionFilter } from './filters/boom-exception.filter';
 
 @Global() // Make services available globally
 @Module({
-  providers: [
-    ValidationService, 
-    LoggerService,
-    BoomExceptionFilter,
-  ],
+  providers: [ValidationService, LoggerService, BoomExceptionFilter],
   exports: [ValidationService, LoggerService, BoomExceptionFilter],
 })
-export class CommonModule {} 
+export class CommonModule {}

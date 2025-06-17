@@ -8,11 +8,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Enable validation
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true,
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
   // Global exception filter for Boom errors
   app.useGlobalFilters(new BoomExceptionFilter());
@@ -25,10 +27,14 @@ async function bootstrap() {
     .addTag('Products')
     .addTag('App')
     .build();
-  
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
   await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+
+bootstrap().catch((error) => {
+  console.error('Failed to start application:', error);
+  process.exit(1);
+});

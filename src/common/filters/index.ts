@@ -1,1 +1,1 @@
-export * from './boom-exception.filter'; 
+export * from './boom-exception.filter';

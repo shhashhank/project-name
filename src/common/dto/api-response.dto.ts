@@ -18,10 +18,20 @@ export class ApiResponseDto<T> {
     totalPages: number;
   };
 
-  constructor(success: boolean, message: string, data?: T, pagination?: any) {
+  constructor(
+    success: boolean,
+    message: string,
+    data?: T,
+    pagination?: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+    },
+  ) {
     this.success = success;
     this.message = message;
     this.data = data;
     this.pagination = pagination;
   }
-} 
+}

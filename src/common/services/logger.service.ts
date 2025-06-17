@@ -42,4 +42,4 @@ export class LoggerService implements ILoggerService, NestLoggerService {
     const contextStr = context ? `[${context}]` : '';
     console.debug(`${timestamp} ${contextStr} DEBUG: ${message}`);
   }
-} 
+}

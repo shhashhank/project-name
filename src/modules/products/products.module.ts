@@ -19,4 +19,4 @@ import { PRODUCT_SERVICE } from '../../common/interfaces/service.interface';
   ],
   exports: [ProductsService, ProductRepository, PRODUCT_SERVICE],
 })
-export class ProductsModule {} 
+export class ProductsModule {}

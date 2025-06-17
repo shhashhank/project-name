@@ -1,4 +1,11 @@
-import { Column, DataType, Model, Table, CreatedAt, UpdatedAt, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import {
+  Column,
+  DataType,
+  Model,
+  Table,
+  CreatedAt,
+  UpdatedAt,
+} from 'sequelize-typescript';
 
 @Table({
   tableName: 'orders',
@@ -20,7 +27,13 @@ export class Order extends Model {
   orderNumber: string;
 
   @Column({
-    type: DataType.ENUM('pending', 'confirmed', 'shipped', 'delivered', 'cancelled'),
+    type: DataType.ENUM(
+      'pending',
+      'confirmed',
+      'shipped',
+      'delivered',
+      'cancelled',
+    ),
     allowNull: false,
     defaultValue: 'pending',
   })
@@ -61,4 +74,4 @@ export class Order extends Model {
 
   @UpdatedAt
   declare updatedAt: Date;
-} 
+}

@@ -17,31 +17,37 @@ export class BoomExceptionFilter implements ExceptionFilter {
 
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'Internal server error';
-    let errorData: any = null;
+    let errorData: unknown = null;
 
     // Handle Boom errors
     if (Boom.isBoom(exception)) {
-      const boomError = exception as Boom.Boom;
+      const boomError = exception;
       status = boomError.output.statusCode;
       message = boomError.message;
       errorData = boomError.data || null;
 
       // Add Boom headers to response
       if (boomError.output.headers) {
-        Object.entries(boomError.output.headers).forEach(([key, value]) => {
-          response.header(key, value?.toString());
-        });
+        Object.entries(boomError.output.headers).forEach(
+          ([key, value]: [string, unknown]) => {
+            response.header(key, value?.toString());
+          },
+        );
       }
     }
     // Handle NestJS HTTP exceptions
     else if (exception instanceof HttpException) {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
-      
+
       if (typeof exceptionResponse === 'string') {
         message = exceptionResponse;
-      } else if (typeof exceptionResponse === 'object') {
-        message = (exceptionResponse as any).message || exception.message;
+      } else if (
+        typeof exceptionResponse === 'object' &&
+        exceptionResponse !== null
+      ) {
+        const responseObj = exceptionResponse as Record<string, unknown>;
+        message = (responseObj.message as string) || exception.message;
         errorData = exceptionResponse;
       }
     }
@@ -50,20 +56,24 @@ export class BoomExceptionFilter implements ExceptionFilter {
       message = exception.message;
       errorData = {
         name: exception.name,
-        stack: process.env.NODE_ENV === 'development' ? exception.stack : undefined,
+        stack:
+          process.env.NODE_ENV === 'development' ? exception.stack : undefined,
       };
     }
 
     // Create standardized error response
-    const errorResponse = {
+    const errorResponse: Record<string, unknown> = {
       statusCode: status,
       message,
       error: this.getErrorType(status),
       timestamp: new Date().toISOString(),
       path: request.url,
       method: request.method,
-      ...(errorData && { data: errorData }),
     };
+
+    if (errorData) {
+      errorResponse.data = errorData as Record<string, unknown>;
+    }
 
     // Log error in development
     if (process.env.NODE_ENV === 'development') {
@@ -77,7 +87,7 @@ export class BoomExceptionFilter implements ExceptionFilter {
           query: request.query,
         },
         response: errorResponse,
-      });
+      } as Record<string, unknown>);
     }
 
     response.status(status).json(errorResponse);
@@ -109,4 +119,4 @@ export class BoomExceptionFilter implements ExceptionFilter {
         return 'Internal Server Error';
     }
   }
-} 
+}
