@@ -40,3 +40,5 @@ bootstrap().catch((error) => {
 });
 // test comment
 // another test comment
+// test comment for pre-commit
+// test comment for clean commit
