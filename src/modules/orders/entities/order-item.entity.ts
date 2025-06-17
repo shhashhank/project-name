@@ -8,49 +8,49 @@ import { Product } from '../../products/entities/product.entity';
 })
 export class OrderItem extends Model {
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.UUID,
     primaryKey: true,
-    autoIncrement: true,
+    defaultValue: DataType.UUIDV4,
   })
-  declare id: number;
+  declare id: string;
 
   @ForeignKey(() => Order)
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.UUID,
     allowNull: false,
   })
-  orderId: number;
+  declare orderId: string;
 
   @ForeignKey(() => Product)
   @Column({
     type: DataType.UUID,
     allowNull: false,
   })
-  productId: string;
+  declare productId: string;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  quantity: number;
+  declare quantity: number;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
     allowNull: false,
   })
-  unitPrice: number;
+  declare unitPrice: number;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
     allowNull: false,
   })
-  totalPrice: number;
+  declare totalPrice: number;
 
   @BelongsTo(() => Order)
-  order: Order;
+  declare order: Order;
 
   @BelongsTo(() => Product)
-  product: Product;
+  declare product: Product;
 
   @CreatedAt
   declare createdAt: Date;

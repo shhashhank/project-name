@@ -8,7 +8,7 @@ import { BaseRepository } from '../../../common/repositories/base.repository';
 export class ProductRepository extends BaseRepository<Product> {
   constructor(
     @InjectModel(Product)
-    private productModel: typeof Product,
+    productModel: typeof Product,
   ) {
     super(productModel);
   }

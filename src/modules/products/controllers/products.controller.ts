@@ -10,7 +10,7 @@ import {
   Inject
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags, ApiQuery } from '@nestjs/swagger';
-import { ProductsService } from '../services/products.service';
+// import { ProductsService } from '../services/products.service';
 import { CreateProductDto, UpdateProductDto } from '../dto';
 import { Product } from '../entities/product.entity';
 import { IProductService, PRODUCT_SERVICE } from '../../../common/interfaces/service.interface';

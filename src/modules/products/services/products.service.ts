@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Product } from '../entities/product.entity';
 import { CreateProductDto, UpdateProductDto } from '../dto';
-import { IProductService } from '../../../common/interfaces/service.interface';
+import { IProductService as IBaseProductService } from '../../../common/interfaces/service.interface';
+import { IProductService } from '../interfaces/product-service.interface';
 import { ProductRepository } from '../repositories/product.repository';
 import { ValidationService } from '../../../common/services/validation.service';
 import { BoomExceptionFactory } from '../../../common/factories/boom-exception.factory';
 import { LoggerService } from '../../../common/services/logger.service';
 
 @Injectable()
-export class ProductsService implements IProductService {
+export class ProductsService implements IBaseProductService, IProductService {
   private readonly logger = LoggerService.getInstance();
 
   constructor(
@@ -149,6 +150,43 @@ export class ProductsService implements IProductService {
     } catch (error) {
       this.logger.error('Failed to find low stock products', error, 'ProductsService.findLowStockProducts');
       throw BoomExceptionFactory.badRequest('Failed to find low stock products', 'ProductsService');
+    }
+  }
+
+  // Implementation for IProductService interface
+  async findById(id: string): Promise<Product | null> {
+    try {
+      this.validationService.validateUUID(id, 'ProductsService.findById');
+      return await this.productRepository.findById(id);
+    } catch (error) {
+      this.logger.error(`Failed to find product with ID: ${id}`, error, 'ProductsService.findById');
+      return null;
+    }
+  }
+
+  async updateStock(productId: string, quantityChange: number): Promise<Product> {
+    try {
+      this.validationService.validateUUID(productId, 'ProductsService.updateStock');
+      
+      const product = await this.productRepository.findById(productId);
+      if (!product) {
+        throw BoomExceptionFactory.notFound(`Product with ID ${productId} not found`, 'ProductsService.updateStock');
+      }
+
+      const newStock = product.stock + quantityChange;
+      if (newStock < 0) {
+        throw BoomExceptionFactory.badRequest(
+          `Cannot reduce stock below 0. Current: ${product.stock}, Change: ${quantityChange}`,
+          'ProductsService.updateStock'
+        );
+      }
+
+      const updatedProduct = await this.productRepository.update(productId, { stock: newStock });
+      this.logger.log(`Stock updated for product ${productId}: ${product.stock} → ${newStock}`, 'ProductsService');
+      return updatedProduct;
+    } catch (error) {
+      this.logger.error(`Failed to update stock for product ${productId}`, error, 'ProductsService.updateStock');
+      throw error;
     }
   }
 } 

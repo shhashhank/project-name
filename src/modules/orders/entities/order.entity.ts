@@ -1,4 +1,4 @@
-import { Column, DataType, Model, Table, CreatedAt, UpdatedAt, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import { Column, DataType, Model, Table, CreatedAt, UpdatedAt } from 'sequelize-typescript';
 
 @Table({
   tableName: 'orders',
@@ -6,55 +6,55 @@ import { Column, DataType, Model, Table, CreatedAt, UpdatedAt, ForeignKey, Belon
 })
 export class Order extends Model {
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.UUID,
     primaryKey: true,
-    autoIncrement: true,
+    defaultValue: DataType.UUIDV4,
   })
-  declare id: number;
+  declare id: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
     unique: true,
   })
-  orderNumber: string;
+  declare orderNumber: string;
 
   @Column({
     type: DataType.ENUM('pending', 'confirmed', 'shipped', 'delivered', 'cancelled'),
     allowNull: false,
     defaultValue: 'pending',
   })
-  status: string;
+  declare status: string;
 
   @Column({
     type: DataType.DECIMAL(10, 2),
     allowNull: false,
   })
-  totalAmount: number;
+  declare totalAmount: number;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  customerEmail: string;
+  declare customerEmail: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  customerName: string;
+  declare customerName: string;
 
   @Column({
     type: DataType.TEXT,
     allowNull: true,
   })
-  shippingAddress: string;
+  declare shippingAddress: string;
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
-  cancelledAt?: Date;
+  declare cancelledAt?: Date;
 
   @CreatedAt
   declare createdAt: Date;

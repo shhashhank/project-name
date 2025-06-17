@@ -8,7 +8,7 @@ export class ApiResponseDto<T> {
   message: string;
 
   @ApiProperty({ description: 'Response data' })
-  data?: T;
+  data?: T|undefined;
 
   @ApiProperty({ description: 'Pagination info', required: false })
   pagination?: {

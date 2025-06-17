@@ -9,13 +9,13 @@ export enum ExceptionType {
 
 export interface ExceptionOptions {
   message: string;
-  context?: string;
-  error?: any;
+  context?: string | undefined;
+  error?: any | undefined;
 }
 
 export class ExceptionFactory {
   static create(type: ExceptionType, options: ExceptionOptions): Error {
-    const { message, context, error } = options;
+    const { message, context } = options;
     const contextMessage = context ? `[${context}] ` : '';
 
     switch (type) {
