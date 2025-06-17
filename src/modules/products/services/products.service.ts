@@ -1,108 +1,154 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/sequelize';
+import { Injectable } from '@nestjs/common';
 import { Product } from '../entities/product.entity';
 import { CreateProductDto, UpdateProductDto } from '../dto';
+import { IProductService } from '../../../common/interfaces/service.interface';
+import { ProductRepository } from '../repositories/product.repository';
+import { ValidationService } from '../../../common/services/validation.service';
+import { ExceptionFactory } from '../../../common/factories/exception.factory';
+import { LoggerService } from '../../../common/services/logger.service';
 
 @Injectable()
-export class ProductsService {
+export class ProductsService implements IProductService {
+  private readonly logger = LoggerService.getInstance();
+
   constructor(
-    @InjectModel(Product)
-    private productModel: typeof Product,
+    private readonly productRepository: ProductRepository,
+    private readonly validationService: ValidationService,
   ) {}
 
-  async create(createProductDto: CreateProductDto): Promise<Product> {
+  async createProduct(createProductDto: CreateProductDto): Promise<Product> {
     try {
-      const product = await this.productModel.create({
+      // Validate input data
+      this.validationService.validatePrice(createProductDto.price, 'ProductsService.createProduct');
+      this.validationService.validateStock(createProductDto.stock, 'ProductsService.createProduct');
+
+      const product = await this.productRepository.create({
         ...createProductDto,
         isActive: createProductDto.isActive ?? true,
       });
-      console.log(`Product created successfully: ${product.dataValues.name}`);
+
+      this.logger.log(`Product created successfully: ${product.get('name')}`, 'ProductsService');
       return product;
     } catch (error) {
-      console.error('Error creating product:', error);
-      throw new BadRequestException('Failed to create product');
+      this.logger.error('Failed to create product', error, 'ProductsService.createProduct');
+      throw ExceptionFactory.badRequest('Failed to create product', 'ProductsService');
     }
   }
 
-  async findAll(): Promise<Product[]> {
+  async getAllProducts(): Promise<Product[]> {
     try {
-      const products = await this.productModel.findAll({
-        where: { isActive: true },
-        order: [['createdAt', 'DESC']],
-      });
+      const products = await this.productRepository.findActiveProducts();
+      this.logger.log(`Retrieved ${products.length} active products`, 'ProductsService');
       return products;
     } catch (error) {
-      console.error('Error fetching products:', error);
-      throw new BadRequestException('Failed to fetch products');
+      this.logger.error('Failed to fetch products', error, 'ProductsService.getAllProducts');
+      throw ExceptionFactory.badRequest('Failed to fetch products', 'ProductsService');
     }
   }
 
-  async findOne(id: string): Promise<Product> {
+  async getProductById(id: string): Promise<Product> {
     try {
-      const product = await this.productModel.findByPk(id);
-      if (!product) {
-        throw new NotFoundException(`Product with ID ${id} not found`);
-      }
-      return product;
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      console.error('Error fetching product:', error);
-      throw new BadRequestException('Failed to fetch product');
-    }
-  }
-
-  async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
-    try {
-      const product = await this.productModel.findByPk(id);
-      if (!product) {
-        throw new NotFoundException(`Product with ID ${id} not found`);
-      }
-
-      await product.update(updateProductDto);
-      console.log(`Product ${id} updated successfully`);
-      return product;
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      console.error('Error updating product:', error);
-      throw new BadRequestException('Failed to update product');
-    }
-  }
-
-  async remove(id: string): Promise<{ message: string }> {
-    try {
-      const product = await this.productModel.findByPk(id);
-      if (!product) {
-        throw new NotFoundException(`Product with ID ${id} not found`);
-      }
+      this.validationService.validateUUID(id, 'ProductsService.getProductById');
       
-      await product.destroy();
-      console.log(`Product ${id} deleted successfully`);
-      return { message: `Product with ID ${id} deleted successfully` };
+      const product = await this.productRepository.findById(id);
+      if (!product) {
+        throw ExceptionFactory.notFound(`Product with ID ${id} not found`, 'ProductsService');
+      }
+
+      this.logger.log(`Retrieved product: ${product.get('name')}`, 'ProductsService');
+      return product;
     } catch (error) {
-      if (error instanceof NotFoundException) {
+      if (error instanceof Error && error.message.includes('not found')) {
         throw error;
       }
-      console.error('Error deleting product:', error);
-      throw new BadRequestException('Failed to delete product');
+      this.logger.error(`Failed to fetch product with ID: ${id}`, error, 'ProductsService.getProductById');
+      throw ExceptionFactory.badRequest('Failed to fetch product', 'ProductsService');
     }
   }
 
-  async findByIds(ids: string[]): Promise<Product[]> {
+  async updateProduct(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
     try {
-      const products = await this.productModel.findAll({
-        where: {
-          id: ids,
-          isActive: true,
-        },
-      });
+      this.validationService.validateUUID(id, 'ProductsService.updateProduct');
+      
+      if (updateProductDto.price !== undefined) {
+        this.validationService.validatePrice(updateProductDto.price, 'ProductsService.updateProduct');
+      }
+      if (updateProductDto.stock !== undefined) {
+        this.validationService.validateStock(updateProductDto.stock, 'ProductsService.updateProduct');
+      }
+
+      const product = await this.productRepository.update(id, updateProductDto);
+      this.logger.log(`Product updated successfully: ${product.get('name')}`, 'ProductsService');
+      return product;
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('not found')) {
+        throw error;
+      }
+      this.logger.error(`Failed to update product with ID: ${id}`, error, 'ProductsService.updateProduct');
+      throw ExceptionFactory.badRequest('Failed to update product', 'ProductsService');
+    }
+  }
+
+  async deleteProduct(id: string): Promise<{ message: string }> {
+    try {
+      this.validationService.validateUUID(id, 'ProductsService.deleteProduct');
+      
+      await this.productRepository.delete(id);
+      const message = `Product with ID ${id} deleted successfully`;
+      this.logger.log(message, 'ProductsService');
+      return { message };
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('not found')) {
+        throw error;
+      }
+      this.logger.error(`Failed to delete product with ID: ${id}`, error, 'ProductsService.deleteProduct');
+      throw ExceptionFactory.badRequest('Failed to delete product', 'ProductsService');
+    }
+  }
+
+  async getProductsByIds(ids: string[]): Promise<Product[]> {
+    try {
+      // Validate all UUIDs
+      ids.forEach(id => this.validationService.validateUUID(id, 'ProductsService.getProductsByIds'));
+      
+      const products = await this.productRepository.findByIds(ids);
+      this.logger.log(`Retrieved ${products.length} products by IDs`, 'ProductsService');
       return products;
     } catch (error) {
-      console.error('Error fetching products by IDs:', error);
-      throw new BadRequestException('Failed to fetch products');
+      this.logger.error('Failed to fetch products by IDs', error, 'ProductsService.getProductsByIds');
+      throw ExceptionFactory.badRequest('Failed to fetch products', 'ProductsService');
+    }
+  }
+
+  // Additional business logic methods
+  async findProductsByPriceRange(minPrice: number, maxPrice: number): Promise<Product[]> {
+    try {
+      this.validationService.validatePrice(minPrice, 'ProductsService.findProductsByPriceRange');
+      this.validationService.validatePrice(maxPrice, 'ProductsService.findProductsByPriceRange');
+      
+      if (minPrice > maxPrice) {
+        throw ExceptionFactory.badRequest('Min price cannot be greater than max price', 'ProductsService');
+      }
+
+      const products = await this.productRepository.findProductsByPriceRange(minPrice, maxPrice);
+      this.logger.log(`Found ${products.length} products in price range ${minPrice}-${maxPrice}`, 'ProductsService');
+      return products;
+    } catch (error) {
+      this.logger.error('Failed to find products by price range', error, 'ProductsService.findProductsByPriceRange');
+      throw ExceptionFactory.badRequest('Failed to find products by price range', 'ProductsService');
+    }
+  }
+
+  async findLowStockProducts(threshold: number = 10): Promise<Product[]> {
+    try {
+      this.validationService.validateStock(threshold, 'ProductsService.findLowStockProducts');
+      
+      const products = await this.productRepository.findLowStockProducts(threshold);
+      this.logger.log(`Found ${products.length} products with low stock (≤${threshold})`, 'ProductsService');
+      return products;
+    } catch (error) {
+      this.logger.error('Failed to find low stock products', error, 'ProductsService.findLowStockProducts');
+      throw ExceptionFactory.badRequest('Failed to find low stock products', 'ProductsService');
     }
   }
 } 
