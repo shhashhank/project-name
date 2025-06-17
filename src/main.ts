@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { BoomExceptionFilter } from './common/filters/boom-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,11 +14,15 @@ async function bootstrap() {
     transform: true,
   }));
 
+  // Global exception filter for Boom errors
+  app.useGlobalFilters(new BoomExceptionFilter());
+
   // Swagger configuration
   const config = new DocumentBuilder()
-    .setTitle('NestJS API')
-    .setDescription('The NestJS API description')
+    .setTitle('E-commerce API')
+    .setDescription('A scalable NestJS-based e-commerce backend API')
     .setVersion('1.0')
+    .addTag('Products')
     .addTag('App')
     .build();
   
