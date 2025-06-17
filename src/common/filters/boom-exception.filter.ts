@@ -82,6 +82,7 @@ export class BoomExceptionFilter implements ExceptionFilter {
         request: {
           method: request.method,
           url: request.url,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           body: request.body,
           params: request.params,
           query: request.query,

@@ -26,6 +26,7 @@ export class BoomExceptionFactory {
     const message = options.message;
     const context = options.context;
     const error = options.error;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const data = options.data;
     const headers = options.headers;
     const contextMessage = context ? `[${context}] ` : '';
@@ -98,6 +99,7 @@ export class BoomExceptionFactory {
     return this.create(BoomErrorType.BAD_REQUEST, {
       message,
       context,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       data,
     });
   }
@@ -110,6 +112,7 @@ export class BoomExceptionFactory {
     return this.create(BoomErrorType.UNAUTHORIZED, {
       message,
       context,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       data,
     });
   }
@@ -118,6 +121,7 @@ export class BoomExceptionFactory {
     return this.create(BoomErrorType.FORBIDDEN, {
       message,
       context,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       data,
     });
   }
@@ -126,6 +130,7 @@ export class BoomExceptionFactory {
     return this.create(BoomErrorType.NOT_FOUND, {
       message,
       context,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       data,
     });
   }
@@ -134,6 +139,7 @@ export class BoomExceptionFactory {
     return this.create(BoomErrorType.CONFLICT, {
       message,
       context,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       data,
     });
   }
@@ -146,6 +152,7 @@ export class BoomExceptionFactory {
     return this.create(BoomErrorType.UNPROCESSABLE_ENTITY, {
       message,
       context,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       data,
     });
   }
@@ -158,6 +165,7 @@ export class BoomExceptionFactory {
     return this.create(BoomErrorType.TOO_MANY_REQUESTS, {
       message,
       context,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       data,
     });
   }
@@ -171,7 +179,9 @@ export class BoomExceptionFactory {
     return this.create(BoomErrorType.INTERNAL_SERVER_ERROR, {
       message,
       context,
+
       error,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       data,
     });
   }
@@ -180,6 +190,7 @@ export class BoomExceptionFactory {
     return this.create(BoomErrorType.BAD_GATEWAY, {
       message,
       context,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       data,
     });
   }
@@ -192,6 +203,7 @@ export class BoomExceptionFactory {
     return this.create(BoomErrorType.SERVICE_UNAVAILABLE, {
       message,
       context,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       data,
     });
   }
@@ -202,6 +214,7 @@ export class BoomExceptionFactory {
     context?: string,
     validationErrors?: any,
   ): Boom.Boom {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     return this.unprocessableEntity(message, context, { validationErrors });
   }
 
@@ -222,6 +235,7 @@ export class BoomExceptionFactory {
     context?: string,
     data?: any,
   ): Boom.Boom {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const safeData = data && typeof data === 'object' ? { ...data } : {};
     return this.unauthorized(message, context, {
       ...safeData,
@@ -235,6 +249,7 @@ export class BoomExceptionFactory {
     context?: string,
     data?: any,
   ): Boom.Boom {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const safeData = data && typeof data === 'object' ? { ...data } : {};
     return this.forbidden(message, context, {
       ...safeData,

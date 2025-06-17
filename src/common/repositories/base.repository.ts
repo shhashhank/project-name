@@ -147,6 +147,7 @@ export abstract class BaseRepository<T extends Model>
   async findByIds(ids: string[]): Promise<T[]> {
     try {
       const results = await this.model.findAll({
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         where: { id: ids } as any,
       });
       this.logger.log(
