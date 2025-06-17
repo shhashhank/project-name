@@ -4,7 +4,7 @@ import { CreateProductDto, UpdateProductDto } from '../dto';
 import { IProductService } from '../../../common/interfaces/service.interface';
 import { ProductRepository } from '../repositories/product.repository';
 import { ValidationService } from '../../../common/services/validation.service';
-import { ExceptionFactory } from '../../../common/factories/exception.factory';
+import { BoomExceptionFactory } from '../../../common/factories/boom-exception.factory';
 import { LoggerService } from '../../../common/services/logger.service';
 
 @Injectable()
@@ -31,7 +31,7 @@ export class ProductsService implements IProductService {
       return product;
     } catch (error) {
       this.logger.error('Failed to create product', error, 'ProductsService.createProduct');
-      throw ExceptionFactory.badRequest('Failed to create product', 'ProductsService');
+      throw BoomExceptionFactory.badRequest('Failed to create product', 'ProductsService');
     }
   }
 
@@ -42,7 +42,7 @@ export class ProductsService implements IProductService {
       return products;
     } catch (error) {
       this.logger.error('Failed to fetch products', error, 'ProductsService.getAllProducts');
-      throw ExceptionFactory.badRequest('Failed to fetch products', 'ProductsService');
+      throw BoomExceptionFactory.badRequest('Failed to fetch products', 'ProductsService');
     }
   }
 
@@ -52,7 +52,7 @@ export class ProductsService implements IProductService {
       
       const product = await this.productRepository.findById(id);
       if (!product) {
-        throw ExceptionFactory.notFound(`Product with ID ${id} not found`, 'ProductsService');
+        throw BoomExceptionFactory.notFound(`Product with ID ${id} not found`, 'ProductsService');
       }
 
       this.logger.log(`Retrieved product: ${product.get('name')}`, 'ProductsService');
@@ -62,7 +62,7 @@ export class ProductsService implements IProductService {
         throw error;
       }
       this.logger.error(`Failed to fetch product with ID: ${id}`, error, 'ProductsService.getProductById');
-      throw ExceptionFactory.badRequest('Failed to fetch product', 'ProductsService');
+      throw BoomExceptionFactory.badRequest('Failed to fetch product', 'ProductsService');
     }
   }
 
@@ -85,7 +85,7 @@ export class ProductsService implements IProductService {
         throw error;
       }
       this.logger.error(`Failed to update product with ID: ${id}`, error, 'ProductsService.updateProduct');
-      throw ExceptionFactory.badRequest('Failed to update product', 'ProductsService');
+      throw BoomExceptionFactory.badRequest('Failed to update product', 'ProductsService');
     }
   }
 
@@ -102,7 +102,7 @@ export class ProductsService implements IProductService {
         throw error;
       }
       this.logger.error(`Failed to delete product with ID: ${id}`, error, 'ProductsService.deleteProduct');
-      throw ExceptionFactory.badRequest('Failed to delete product', 'ProductsService');
+      throw BoomExceptionFactory.badRequest('Failed to delete product', 'ProductsService');
     }
   }
 
@@ -116,7 +116,7 @@ export class ProductsService implements IProductService {
       return products;
     } catch (error) {
       this.logger.error('Failed to fetch products by IDs', error, 'ProductsService.getProductsByIds');
-      throw ExceptionFactory.badRequest('Failed to fetch products', 'ProductsService');
+      throw BoomExceptionFactory.badRequest('Failed to fetch products', 'ProductsService');
     }
   }
 
@@ -127,7 +127,7 @@ export class ProductsService implements IProductService {
       this.validationService.validatePrice(maxPrice, 'ProductsService.findProductsByPriceRange');
       
       if (minPrice > maxPrice) {
-        throw ExceptionFactory.badRequest('Min price cannot be greater than max price', 'ProductsService');
+        throw BoomExceptionFactory.badRequest('Min price cannot be greater than max price', 'ProductsService');
       }
 
       const products = await this.productRepository.findProductsByPriceRange(minPrice, maxPrice);
@@ -135,7 +135,7 @@ export class ProductsService implements IProductService {
       return products;
     } catch (error) {
       this.logger.error('Failed to find products by price range', error, 'ProductsService.findProductsByPriceRange');
-      throw ExceptionFactory.badRequest('Failed to find products by price range', 'ProductsService');
+      throw BoomExceptionFactory.badRequest('Failed to find products by price range', 'ProductsService');
     }
   }
 
@@ -148,7 +148,7 @@ export class ProductsService implements IProductService {
       return products;
     } catch (error) {
       this.logger.error('Failed to find low stock products', error, 'ProductsService.findLowStockProducts');
-      throw ExceptionFactory.badRequest('Failed to find low stock products', 'ProductsService');
+      throw BoomExceptionFactory.badRequest('Failed to find low stock products', 'ProductsService');
     }
   }
 } 

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ExceptionFactory } from '../factories/exception.factory';
+import { BoomExceptionFactory } from '../factories/boom-exception.factory';
 
 export interface ValidationStrategy {
   validate(value: any): boolean;
@@ -51,11 +51,17 @@ export class ValidationService {
   validate(value: any, strategyName: string, context?: string): void {
     const strategy = this.strategies.get(strategyName);
     if (!strategy) {
-      throw ExceptionFactory.internalServerError(`Validation strategy '${strategyName}' not found`, context);
+      throw BoomExceptionFactory.internalServerError(
+        `Validation strategy '${strategyName}' not found`,
+        context
+      );
     }
 
     if (!strategy.validate(value)) {
-      throw ExceptionFactory.validationError(strategy.getErrorMessage(), context);
+      throw BoomExceptionFactory.validationError(
+        strategy.getErrorMessage(),
+        context
+      );
     }
   }
 

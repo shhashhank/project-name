@@ -73,8 +73,9 @@ src/
 - **IRepository**: Interface defining repository contract
 
 ### **2. Factory Pattern**
-- **ExceptionFactory**: Centralized exception creation with different types
-- **ValidationService**: Factory for different validation strategies
+- **ExceptionFactory**: Centralized exception creation
+- **BoomExceptionFactory**: HTTP-friendly error creation with proper status codes
+- **ValidationService**: Factory for validation strategies
 
 ### **3. Strategy Pattern**
 - **ValidationService**: Different validation strategies (UUID, Price, Stock)
@@ -100,12 +101,13 @@ src/
 - **Database Integration**: PostgreSQL with Sequelize ORM
 - **API Documentation**: Swagger/OpenAPI integration
 - **Validation**: Class-validator integration with custom validation strategies
-- **Error Handling**: Centralized exception handling with factory pattern
+- **Error Handling**: Centralized exception handling with Boom HTTP-friendly errors
 - **TypeScript**: Full type safety with interfaces and generics
 - **Security**: UUID-based IDs for better security and distributed systems support
 - **Logging**: Structured logging with context and timestamps
 - **SOLID Principles**: Clean architecture following all SOLID principles
 - **Design Patterns**: Repository, Factory, Strategy, Template Method, Singleton, DI
+- **Boom Integration**: Standardized HTTP error responses with proper status codes
 
 ### 🔄 Planned Features
 - **Order Management**: Complete order lifecycle
@@ -135,7 +137,47 @@ src/
 - **ORM**: Sequelize
 - **Documentation**: Swagger/OpenAPI
 - **Validation**: class-validator
+- **Error Handling**: @hapi/boom
 - **Language**: TypeScript
+
+## 🚨 Error Handling with Boom
+
+This project uses **@hapi/boom** for standardized HTTP error responses. All errors are converted to Boom objects with proper HTTP status codes and consistent response format.
+
+### **Error Response Format**
+```json
+{
+  "statusCode": 400,
+  "message": "Bad Request",
+  "error": "Bad Request",
+  "timestamp": "2024-01-15T10:30:00.000Z",
+  "path": "/products/invalid-uuid",
+  "method": "GET",
+  "data": {
+    "validationErrors": ["Invalid UUID format"]
+  }
+}
+```
+
+### **Available Error Types**
+- **400 Bad Request**: Invalid input data
+- **401 Unauthorized**: Authentication required
+- **403 Forbidden**: Insufficient permissions
+- **404 Not Found**: Resource not found
+- **409 Conflict**: Resource conflict
+- **422 Unprocessable Entity**: Validation errors
+- **429 Too Many Requests**: Rate limiting
+- **500 Internal Server Error**: Server errors
+- **502 Bad Gateway**: Gateway errors
+- **503 Service Unavailable**: Service unavailable
+
+### **Usage Examples**
+```typescript
+// In services
+throw BoomExceptionFactory.notFound('Product not found', 'ProductsService');
+throw BoomExceptionFactory.validationError('Invalid price', 'ProductsService', validationErrors);
+throw BoomExceptionFactory.databaseError('Database connection failed', 'ProductsService', error);
+```
 
 ## 📦 Installation
 

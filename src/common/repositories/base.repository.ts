@@ -1,6 +1,8 @@
 import { Model, ModelStatic } from 'sequelize';
+import * as Boom from '@hapi/boom';
 import { IRepository } from '../interfaces/repository.interface';
 import { LoggerService } from '../services/logger.service';
+import { BoomExceptionFactory } from '../factories/boom-exception.factory';
 
 export abstract class BaseRepository<T extends Model> implements IRepository<T> {
   protected readonly logger = LoggerService.getInstance();
@@ -14,7 +16,11 @@ export abstract class BaseRepository<T extends Model> implements IRepository<T> 
       return result;
     } catch (error) {
       this.logger.error(`Failed to create ${this.model.name}`, error, this.constructor.name);
-      throw error;
+      throw BoomExceptionFactory.databaseError(
+        `Failed to create ${this.model.name}`,
+        this.constructor.name,
+        error
+      );
     }
   }
 
@@ -27,7 +33,11 @@ export abstract class BaseRepository<T extends Model> implements IRepository<T> 
       return result;
     } catch (error) {
       this.logger.error(`Failed to find ${this.model.name} by ID: ${id}`, error, this.constructor.name);
-      throw error;
+      throw BoomExceptionFactory.databaseError(
+        `Failed to find ${this.model.name} by ID: ${id}`,
+        this.constructor.name,
+        error
+      );
     }
   }
 
@@ -38,7 +48,11 @@ export abstract class BaseRepository<T extends Model> implements IRepository<T> 
       return results;
     } catch (error) {
       this.logger.error(`Failed to find all ${this.model.name}`, error, this.constructor.name);
-      throw error;
+      throw BoomExceptionFactory.databaseError(
+        `Failed to find all ${this.model.name}`,
+        this.constructor.name,
+        error
+      );
     }
   }
 
@@ -46,15 +60,25 @@ export abstract class BaseRepository<T extends Model> implements IRepository<T> 
     try {
       const instance = await this.findById(id);
       if (!instance) {
-        throw new Error(`${this.model.name} with ID ${id} not found`);
+        throw BoomExceptionFactory.notFound(
+          `${this.model.name} with ID ${id} not found`,
+          this.constructor.name
+        );
       }
       
       await instance.update(data as any);
       this.logger.log(`Updated ${this.model.name} with ID: ${id}`, this.constructor.name);
       return instance;
     } catch (error) {
+      if (Boom.isBoom(error)) {
+        throw error;
+      }
       this.logger.error(`Failed to update ${this.model.name} with ID: ${id}`, error, this.constructor.name);
-      throw error;
+      throw BoomExceptionFactory.databaseError(
+        `Failed to update ${this.model.name} with ID: ${id}`,
+        this.constructor.name,
+        error
+      );
     }
   }
 
@@ -62,14 +86,24 @@ export abstract class BaseRepository<T extends Model> implements IRepository<T> 
     try {
       const instance = await this.findById(id);
       if (!instance) {
-        throw new Error(`${this.model.name} with ID ${id} not found`);
+        throw BoomExceptionFactory.notFound(
+          `${this.model.name} with ID ${id} not found`,
+          this.constructor.name
+        );
       }
       
       await instance.destroy();
       this.logger.log(`Deleted ${this.model.name} with ID: ${id}`, this.constructor.name);
     } catch (error) {
+      if (Boom.isBoom(error)) {
+        throw error;
+      }
       this.logger.error(`Failed to delete ${this.model.name} with ID: ${id}`, error, this.constructor.name);
-      throw error;
+      throw BoomExceptionFactory.databaseError(
+        `Failed to delete ${this.model.name} with ID: ${id}`,
+        this.constructor.name,
+        error
+      );
     }
   }
 
@@ -82,7 +116,11 @@ export abstract class BaseRepository<T extends Model> implements IRepository<T> 
       return results;
     } catch (error) {
       this.logger.error(`Failed to find ${this.model.name} by IDs`, error, this.constructor.name);
-      throw error;
+      throw BoomExceptionFactory.databaseError(
+        `Failed to find ${this.model.name} by IDs`,
+        this.constructor.name,
+        error
+      );
     }
   }
 
@@ -94,7 +132,11 @@ export abstract class BaseRepository<T extends Model> implements IRepository<T> 
       return results;
     } catch (error) {
       this.logger.error(`Failed to execute custom query on ${this.model.name}`, error, this.constructor.name);
-      throw error;
+      throw BoomExceptionFactory.databaseError(
+        `Failed to execute custom query on ${this.model.name}`,
+        this.constructor.name,
+        error
+      );
     }
   }
 } 
