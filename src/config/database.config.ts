@@ -16,4 +16,4 @@ export const databaseConfig: SequelizeModuleOptions = {
     acquire: 30000,
     idle: 10000,
   },
-}; 
+};

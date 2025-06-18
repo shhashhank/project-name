@@ -33,43 +33,43 @@ export class BoomExceptionFactory {
       case BoomErrorType.BAD_REQUEST:
         boomError = Boom.badRequest(fullMessage, data);
         break;
-      
+
       case BoomErrorType.UNAUTHORIZED:
         boomError = Boom.unauthorized(fullMessage, data);
         break;
-      
+
       case BoomErrorType.FORBIDDEN:
         boomError = Boom.forbidden(fullMessage, data);
         break;
-      
+
       case BoomErrorType.NOT_FOUND:
         boomError = Boom.notFound(fullMessage, data);
         break;
-      
+
       case BoomErrorType.CONFLICT:
         boomError = Boom.conflict(fullMessage, data);
         break;
-      
+
       case BoomErrorType.UNPROCESSABLE_ENTITY:
         boomError = Boom.badData(fullMessage, data);
         break;
-      
+
       case BoomErrorType.TOO_MANY_REQUESTS:
         boomError = Boom.tooManyRequests(fullMessage, data);
         break;
-      
+
       case BoomErrorType.INTERNAL_SERVER_ERROR:
         boomError = Boom.internal(fullMessage, data);
         break;
-      
+
       case BoomErrorType.BAD_GATEWAY:
         boomError = Boom.badGateway(fullMessage, data);
         break;
-      
+
       case BoomErrorType.SERVICE_UNAVAILABLE:
         boomError = Boom.serverUnavailable(fullMessage, data);
         break;
-      
+
       default:
         boomError = Boom.internal(fullMessage, data);
     }
@@ -94,7 +94,11 @@ export class BoomExceptionFactory {
     return this.create(BoomErrorType.BAD_REQUEST, { message, context, data });
   }
 
-  static unauthorized(message: string, context?: string, data?: any): Boom.Boom {
+  static unauthorized(
+    message: string,
+    context?: string,
+    data?: any,
+  ): Boom.Boom {
     return this.create(BoomErrorType.UNAUTHORIZED, { message, context, data });
   }
 
@@ -110,43 +114,101 @@ export class BoomExceptionFactory {
     return this.create(BoomErrorType.CONFLICT, { message, context, data });
   }
 
-  static unprocessableEntity(message: string, context?: string, data?: any): Boom.Boom {
-    return this.create(BoomErrorType.UNPROCESSABLE_ENTITY, { message, context, data });
+  static unprocessableEntity(
+    message: string,
+    context?: string,
+    data?: any,
+  ): Boom.Boom {
+    return this.create(BoomErrorType.UNPROCESSABLE_ENTITY, {
+      message,
+      context,
+      data,
+    });
   }
 
-  static tooManyRequests(message: string, context?: string, data?: any): Boom.Boom {
-    return this.create(BoomErrorType.TOO_MANY_REQUESTS, { message, context, data });
+  static tooManyRequests(
+    message: string,
+    context?: string,
+    data?: any,
+  ): Boom.Boom {
+    return this.create(BoomErrorType.TOO_MANY_REQUESTS, {
+      message,
+      context,
+      data,
+    });
   }
 
-  static internalServerError(message: string, context?: string, error?: any, data?: any): Boom.Boom {
-    return this.create(BoomErrorType.INTERNAL_SERVER_ERROR, { message, context, error, data });
+  static internalServerError(
+    message: string,
+    context?: string,
+    error?: any,
+    data?: any,
+  ): Boom.Boom {
+    return this.create(BoomErrorType.INTERNAL_SERVER_ERROR, {
+      message,
+      context,
+      error,
+      data,
+    });
   }
 
   static badGateway(message: string, context?: string, data?: any): Boom.Boom {
     return this.create(BoomErrorType.BAD_GATEWAY, { message, context, data });
   }
 
-  static serviceUnavailable(message: string, context?: string, data?: any): Boom.Boom {
-    return this.create(BoomErrorType.SERVICE_UNAVAILABLE, { message, context, data });
+  static serviceUnavailable(
+    message: string,
+    context?: string,
+    data?: any,
+  ): Boom.Boom {
+    return this.create(BoomErrorType.SERVICE_UNAVAILABLE, {
+      message,
+      context,
+      data,
+    });
   }
 
   // Validation specific errors
-  static validationError(message: string, context?: string, validationErrors?: any): Boom.Boom {
+  static validationError(
+    message: string,
+    context?: string,
+    validationErrors?: any,
+  ): Boom.Boom {
     return this.unprocessableEntity(message, context, { validationErrors });
   }
 
   // Database specific errors
-  static databaseError(message: string, context?: string, error?: any): Boom.Boom {
-    return this.internalServerError(message, context, error, { type: 'database_error' });
+  static databaseError(
+    message: string,
+    context?: string,
+    error?: any,
+  ): Boom.Boom {
+    return this.internalServerError(message, context, error, {
+      type: 'database_error',
+    });
   }
 
   // Authentication specific errors
-  static authenticationError(message: string, context?: string, data?: any): Boom.Boom {
-    return this.unauthorized(message, context, { ...data, type: 'authentication_error' });
+  static authenticationError(
+    message: string,
+    context?: string,
+    data?: any,
+  ): Boom.Boom {
+    return this.unauthorized(message, context, {
+      ...data,
+      type: 'authentication_error',
+    });
   }
 
   // Authorization specific errors
-  static authorizationError(message: string, context?: string, data?: any): Boom.Boom {
-    return this.forbidden(message, context, { ...data, type: 'authorization_error' });
+  static authorizationError(
+    message: string,
+    context?: string,
+    data?: any,
+  ): Boom.Boom {
+    return this.forbidden(message, context, {
+      ...data,
+      type: 'authorization_error',
+    });
   }
-} 
+}

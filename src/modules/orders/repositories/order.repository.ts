@@ -36,8 +36,17 @@ export class OrderRepository extends BaseRepository<Order> {
     });
   }
 
-  async findWithFilters(query: QueryOrderDto): Promise<{ orders: Order[]; total: number }> {
-    const { page = 1, limit = 10, status, customerEmail, customerName, orderNumber } = query;
+  async findWithFilters(
+    query: QueryOrderDto,
+  ): Promise<{ orders: Order[]; total: number }> {
+    const {
+      page = 1,
+      limit = 10,
+      status,
+      customerEmail,
+      customerName,
+      orderNumber,
+    } = query;
     const offset = (page - 1) * limit;
 
     if (!this.model.sequelize) {
@@ -46,9 +55,12 @@ export class OrderRepository extends BaseRepository<Order> {
 
     const whereClause: any = {};
     if (status) whereClause.status = status;
-    if (customerEmail) whereClause.customerEmail = { [Op.iLike]: `%${customerEmail}%` };
-    if (customerName) whereClause.customerName = { [Op.iLike]: `%${customerName}%` };
-    if (orderNumber) whereClause.orderNumber = { [Op.iLike]: `%${orderNumber}%` };
+    if (customerEmail)
+      whereClause.customerEmail = { [Op.iLike]: `%${customerEmail}%` };
+    if (customerName)
+      whereClause.customerName = { [Op.iLike]: `%${customerName}%` };
+    if (orderNumber)
+      whereClause.orderNumber = { [Op.iLike]: `%${orderNumber}%` };
 
     const [orders, total] = await Promise.all([
       this.executeQuery({
@@ -59,7 +71,12 @@ export class OrderRepository extends BaseRepository<Order> {
       }),
       this.executeQuery({
         where: whereClause,
-        attributes: [[this.model.sequelize.fn('COUNT', this.model.sequelize.col('id')), 'count']],
+        attributes: [
+          [
+            this.model.sequelize.fn('COUNT', this.model.sequelize.col('id')),
+            'count',
+          ],
+        ],
         raw: true,
       }),
     ]);
@@ -85,7 +102,10 @@ export class OrderRepository extends BaseRepository<Order> {
     const stats = await this.executeQuery({
       attributes: [
         'status',
-        [this.model.sequelize.fn('COUNT', this.model.sequelize.col('id')), 'count'],
+        [
+          this.model.sequelize.fn('COUNT', this.model.sequelize.col('id')),
+          'count',
+        ],
       ],
       group: ['status'],
       raw: true,
@@ -110,4 +130,4 @@ export class OrderRepository extends BaseRepository<Order> {
 
     return result;
   }
-} 
+}

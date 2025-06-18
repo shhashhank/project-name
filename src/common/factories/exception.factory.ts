@@ -1,4 +1,8 @@
-import { BadRequestException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
 export enum ExceptionType {
   NOT_FOUND = 'NOT_FOUND',
@@ -21,34 +25,54 @@ export class ExceptionFactory {
     switch (type) {
       case ExceptionType.NOT_FOUND:
         return new NotFoundException(`${contextMessage}${message}`);
-      
+
       case ExceptionType.BAD_REQUEST:
         return new BadRequestException(`${contextMessage}${message}`);
-      
+
       case ExceptionType.VALIDATION_ERROR:
         return new BadRequestException(`${contextMessage}${message}`);
-      
+
       case ExceptionType.INTERNAL_SERVER_ERROR:
         return new InternalServerErrorException(`${contextMessage}${message}`);
-      
+
       default:
         return new InternalServerErrorException(`${contextMessage}${message}`);
     }
   }
 
   static notFound(message: string, context?: string): NotFoundException {
-    return this.create(ExceptionType.NOT_FOUND, { message, context }) as NotFoundException;
+    return this.create(ExceptionType.NOT_FOUND, {
+      message,
+      context,
+    }) as NotFoundException;
   }
 
   static badRequest(message: string, context?: string): BadRequestException {
-    return this.create(ExceptionType.BAD_REQUEST, { message, context }) as BadRequestException;
+    return this.create(ExceptionType.BAD_REQUEST, {
+      message,
+      context,
+    }) as BadRequestException;
   }
 
-  static validationError(message: string, context?: string): BadRequestException {
-    return this.create(ExceptionType.VALIDATION_ERROR, { message, context }) as BadRequestException;
+  static validationError(
+    message: string,
+    context?: string,
+  ): BadRequestException {
+    return this.create(ExceptionType.VALIDATION_ERROR, {
+      message,
+      context,
+    }) as BadRequestException;
   }
 
-  static internalServerError(message: string, context?: string, error?: any): InternalServerErrorException {
-    return this.create(ExceptionType.INTERNAL_SERVER_ERROR, { message, context, error }) as InternalServerErrorException;
+  static internalServerError(
+    message: string,
+    context?: string,
+    error?: any,
+  ): InternalServerErrorException {
+    return this.create(ExceptionType.INTERNAL_SERVER_ERROR, {
+      message,
+      context,
+      error,
+    }) as InternalServerErrorException;
   }
-} 
+}

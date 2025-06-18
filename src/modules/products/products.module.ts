@@ -22,6 +22,11 @@ import { PRODUCT_SERVICE } from '../../common/interfaces/service.interface';
       useClass: ProductsService,
     },
   ],
-  exports: [ProductsService, ProductRepository, PRODUCT_SERVICE, 'IProductService'],
+  exports: [
+    ProductsService,
+    ProductRepository,
+    PRODUCT_SERVICE,
+    'IProductService',
+  ],
 })
-export class ProductsModule {} 
+export class ProductsModule {}

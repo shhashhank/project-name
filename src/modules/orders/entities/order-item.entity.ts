@@ -1,4 +1,13 @@
-import { Column, DataType, Model, Table, CreatedAt, UpdatedAt, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import {
+  Column,
+  DataType,
+  Model,
+  Table,
+  CreatedAt,
+  UpdatedAt,
+  ForeignKey,
+  BelongsTo,
+} from 'sequelize-typescript';
 import { Order } from './order.entity';
 import { Product } from '../../products/entities/product.entity';
 
@@ -57,4 +66,4 @@ export class OrderItem extends Model {
 
   @UpdatedAt
   declare updatedAt: Date;
-} 
+}

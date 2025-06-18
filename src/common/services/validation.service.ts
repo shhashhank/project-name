@@ -7,7 +7,8 @@ export interface ValidationStrategy {
 }
 
 export class UUIDValidationStrategy implements ValidationStrategy {
-  private readonly uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  private readonly uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
   validate(value: string): boolean {
     return this.uuidRegex.test(value);
@@ -53,14 +54,14 @@ export class ValidationService {
     if (!strategy) {
       throw BoomExceptionFactory.internalServerError(
         `Validation strategy '${strategyName}' not found`,
-        context
+        context,
       );
     }
 
     if (!strategy.validate(value)) {
       throw BoomExceptionFactory.validationError(
         strategy.getErrorMessage(),
-        context
+        context,
       );
     }
   }
@@ -80,4 +81,4 @@ export class ValidationService {
   addStrategy(name: string, strategy: ValidationStrategy): void {
     this.strategies.set(name, strategy);
   }
-} 
+}

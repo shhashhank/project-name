@@ -1,4 +1,11 @@
-import { Column, DataType, Model, Table, CreatedAt, UpdatedAt } from 'sequelize-typescript';
+import {
+  Column,
+  DataType,
+  Model,
+  Table,
+  CreatedAt,
+  UpdatedAt,
+} from 'sequelize-typescript';
 
 @Table({
   tableName: 'products',
@@ -49,4 +56,4 @@ export class Product extends Model {
 
   @UpdatedAt
   declare updatedAt: Date;
-} 
+}

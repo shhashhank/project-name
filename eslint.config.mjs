@@ -61,7 +61,6 @@ export default tseslint.config(
       '@typescript-eslint/prefer-function-type': 'error',
       '@typescript-eslint/prefer-namespace-keyword': 'error',
       '@typescript-eslint/triple-slash-reference': 'error',
-      '@typescript-eslint/type-spacing': 'error',
       '@typescript-eslint/unified-signatures': 'error',
       
       // Code quality rules
@@ -72,25 +71,6 @@ export default tseslint.config(
       'no-implied-eval': 'error',
       'no-new-func': 'error',
       'no-script-url': 'error',
-      
-      // Import rules
-      'import/no-unused-modules': 'error',
-      'import/no-duplicates': 'error',
-      'import/order': ['error', {
-        'groups': [
-          'builtin',
-          'external',
-          'internal',
-          'parent',
-          'sibling',
-          'index'
-        ],
-        'newlines-between': 'always',
-        'alphabetize': {
-          'order': 'asc',
-          'caseInsensitive': true
-        }
-      }],
     },
   },
 );

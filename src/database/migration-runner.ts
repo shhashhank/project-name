@@ -7,7 +7,7 @@ export class MigrationRunner {
   constructor() {
     const env = process.env.NODE_ENV || 'development';
     const config = (databaseConfig as any)[env];
-    
+
     this.sequelize = new Sequelize({
       ...config,
       logging: false,
@@ -17,19 +17,29 @@ export class MigrationRunner {
   async runMigrations(): Promise<void> {
     try {
       console.log('Running database migrations...');
-      
+
       // Import and run migrations manually
       const { Umzug, SequelizeStorage } = require('umzug');
-      
+
       const umzug = new Umzug({
         migrations: {
           glob: 'src/database/migrations/*.js',
-          resolve: ({ name, path, context }: { name: string; path: string; context: any }) => {
+          resolve: ({
+            name,
+            path,
+            context,
+          }: {
+            name: string;
+            path: string;
+            context: any;
+          }) => {
             const migration = require(path);
             return {
               name,
-              up: async () => migration.up(context.queryInterface, context.sequelize),
-              down: async () => migration.down(context.queryInterface, context.sequelize),
+              up: async () =>
+                migration.up(context.queryInterface, context.sequelize),
+              down: async () =>
+                migration.down(context.queryInterface, context.sequelize),
             };
           },
         },
@@ -54,19 +64,29 @@ export class MigrationRunner {
   async runSeeders(): Promise<void> {
     try {
       console.log('Running database seeders...');
-      
+
       // Import and run seeders manually
       const { Umzug, SequelizeStorage } = require('umzug');
-      
+
       const umzug = new Umzug({
         migrations: {
           glob: 'src/database/seeders/*.js',
-          resolve: ({ name, path, context }: { name: string; path: string; context: any }) => {
+          resolve: ({
+            name,
+            path,
+            context,
+          }: {
+            name: string;
+            path: string;
+            context: any;
+          }) => {
             const seeder = require(path);
             return {
               name,
-              up: async () => seeder.up(context.queryInterface, context.sequelize),
-              down: async () => seeder.down(context.queryInterface, context.sequelize),
+              up: async () =>
+                seeder.up(context.queryInterface, context.sequelize),
+              down: async () =>
+                seeder.down(context.queryInterface, context.sequelize),
             };
           },
         },
@@ -74,7 +94,7 @@ export class MigrationRunner {
           queryInterface: this.sequelize.getQueryInterface(),
           sequelize: this.sequelize,
         },
-        storage: new SequelizeStorage({ 
+        storage: new SequelizeStorage({
           sequelize: this.sequelize,
           modelName: 'SequelizeData',
         }),
@@ -90,4 +110,4 @@ export class MigrationRunner {
       await this.sequelize.close();
     }
   }
-} 
+}

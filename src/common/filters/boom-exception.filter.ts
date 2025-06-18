@@ -37,7 +37,7 @@ export class BoomExceptionFilter implements ExceptionFilter {
     else if (exception instanceof HttpException) {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
-      
+
       if (typeof exceptionResponse === 'string') {
         message = exceptionResponse;
       } else if (typeof exceptionResponse === 'object') {
@@ -50,7 +50,8 @@ export class BoomExceptionFilter implements ExceptionFilter {
       message = exception.message;
       errorData = {
         name: exception.name,
-        stack: process.env.NODE_ENV === 'development' ? exception.stack : undefined,
+        stack:
+          process.env.NODE_ENV === 'development' ? exception.stack : undefined,
       };
     }
 
@@ -109,4 +110,4 @@ export class BoomExceptionFilter implements ExceptionFilter {
         return 'Internal Server Error';
     }
   }
-} 
+}

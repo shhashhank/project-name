@@ -17,4 +17,4 @@ export interface IWriteRepository<T> {
   create(data: Partial<T>): Promise<T>;
   update(id: string, data: Partial<T>): Promise<T>;
   delete(id: string): Promise<void>;
-} 
+}

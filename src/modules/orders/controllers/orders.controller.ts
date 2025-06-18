@@ -33,7 +33,9 @@ export class OrdersController {
   })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 404, description: 'Product not found' })
-  async createOrder(@Body() createOrderDto: CreateOrderDto): Promise<ApiResponseDto<Order>> {
+  async createOrder(
+    @Body() createOrderDto: CreateOrderDto,
+  ): Promise<ApiResponseDto<Order>> {
     return this.ordersService.createOrder(createOrderDto);
   }
 
@@ -44,7 +46,9 @@ export class OrdersController {
     description: 'Orders retrieved successfully',
     type: ApiResponseDto,
   })
-  async findAll(@Query() query: QueryOrderDto): Promise<ApiResponseDto<{ orders: Order[]; pagination: any }>> {
+  async findAll(
+    @Query() query: QueryOrderDto,
+  ): Promise<ApiResponseDto<{ orders: Order[]; pagination: any }>> {
     return this.ordersService.findAll(query);
   }
 
@@ -81,7 +85,9 @@ export class OrdersController {
     type: ApiResponseDto,
   })
   @ApiResponse({ status: 404, description: 'Order not found' })
-  async findByOrderNumber(@Param('orderNumber') orderNumber: string): Promise<ApiResponseDto<Order>> {
+  async findByOrderNumber(
+    @Param('orderNumber') orderNumber: string,
+  ): Promise<ApiResponseDto<Order>> {
     return this.ordersService.findByOrderNumber(orderNumber);
   }
 
@@ -126,4 +132,4 @@ export class OrdersController {
   async deleteOrder(@Param('id') id: string): Promise<ApiResponseDto<void>> {
     return this.ordersService.deleteOrder(id);
   }
-} 
+}

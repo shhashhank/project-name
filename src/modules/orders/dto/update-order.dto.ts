@@ -10,7 +10,11 @@ export enum OrderStatus {
 }
 
 export class UpdateOrderDto {
-  @ApiProperty({ description: 'Order status', enum: OrderStatus, required: false })
+  @ApiProperty({
+    description: 'Order status',
+    enum: OrderStatus,
+    required: false,
+  })
   @IsEnum(OrderStatus)
   @IsOptional()
   declare status?: OrderStatus;
@@ -29,4 +33,4 @@ export class UpdateOrderDto {
   @IsString()
   @IsOptional()
   declare shippingAddress?: string;
-} 
+}

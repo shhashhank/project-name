@@ -30,12 +30,20 @@ export class OrderItemRepository extends BaseRepository<OrderItem> {
     if (!this.model.sequelize) {
       throw new Error('Sequelize instance not available');
     }
-    
+
     const result = await this.executeQuery({
       where: { orderId },
-      attributes: [[this.model.sequelize.fn('SUM', this.model.sequelize.col('totalPrice')), 'total']],
+      attributes: [
+        [
+          this.model.sequelize.fn(
+            'SUM',
+            this.model.sequelize.col('totalPrice'),
+          ),
+          'total',
+        ],
+      ],
       raw: true,
     });
     return parseFloat((result[0] as any)?.total || '0');
   }
-} 
+}
